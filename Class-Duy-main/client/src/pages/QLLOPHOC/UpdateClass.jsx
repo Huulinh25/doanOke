@@ -19,29 +19,19 @@ function UpdateClass(){
 
 
   //Lấy data để đưa vào input Update
+  // Lấy thông tin lớp học từ API và cập nhật state khi component được tạo hoặc id thay đổi
   useEffect(() => {
-    // Chỉ gọi axios.get nếu studentData chưa được cập nhật
-    if (!ClassData) {
-      axios.get('http://localhost:8081/api/class')
-        .then(res => {
-          const Class = res.data.find(Class => Class.id === parseInt(id)); //chỉ lấy ra học sinh có id trùng khớp với id được truyền từ useParams()
-          if (Class) {
-            setClassData(Class); // để cập nhật state studentData với dữ liệu học sinh tương ứng
-          
-            // Lấy thông tin từ student và đưa vào các input
-            setTeacherName(Class.teacher_name);
-            setClassName(Class.class_name);         
-            setStatus(Class.status);
-            setTotalStudent(Class.total_student);
-            setStartDate(Class.start_date);
-            
-          }
-          // console.log(student);
-        })
-        .catch(err => console.error(err));
-    }
-  }, [id, ClassData]);
-
+    axios.get(`http://localhost:8081/api/class/${id}`)
+      .then(res => {
+        const classData = res.data;
+        setTeacherName(classData.teacher_name);
+        setClassName(classData.class_name);
+        setStatus(classData.status);
+        setTotalStudent(classData.total_student);
+        setStartDate(classData.start_date);
+      })
+      .catch(err => console.error(err));
+  }, [id]);
 
   const [selectedDate, setSelectedDate] = useState(null); //React Hook
 
@@ -51,7 +41,7 @@ function UpdateClass(){
 
   function handleSubmit(event){
     event.preventDefault();
-     axios.post('http://localhost:8081/UpdateteClass', {
+     axios.put('http://localhost:8081/api/UpdateClass/${id}', {
       teacher_name,
       class_name,
       status,
@@ -117,26 +107,10 @@ function UpdateClass(){
         <p className="err3"></p>
       </div>
     </div>
-    <div className="form-row">
-      <div className="col-6">
-        <label htmlFor="startDate">Ngày tạo lớp:</label>
-        <div>
-          <input
-            type="text"
-            placeholder="Nhập ngày tạo (yyyy-MM-dd)"
-            className="form-control form-control-lg"
-            onChange={(e) => setStartDate(e.target.value)}
-            value={start_date}
-            id="startDate"
-            required // Add the required attribute
-          />
-        </div>
-        <p className="err6"></p>
-      </div>
-    </div>
+    
     <div className="text-center mt-5">
       <button type="submit" className="btn-lg btn-primary">
-        Thêm lớp
+        Cập nhập
       </button>
     </div>
   </form>

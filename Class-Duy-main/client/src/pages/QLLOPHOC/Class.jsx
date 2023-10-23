@@ -16,13 +16,15 @@ function Class(){
     
 
     const handleDelete = async (id) => {
-        
-        try {
-            await axios.delete('http://localhost:8081/api/class/' + id)
-            window.location.reload()
-        }
-        catch(err){
-            console.log(err);
+        const confirmDelete = window.confirm("Are you sure you want to delete this class?");
+        if (confirmDelete) {
+            try {
+                await axios.delete('http://localhost:8081/api/class/' + id)
+                window.location.reload()
+            }
+            catch(err){
+                console.log(err);
+            }
         }
 
     }
